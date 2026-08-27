@@ -3,65 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAROL DA ALMA - Arquitetura Viva</title>
+<title>FAROL DA ALMA</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-body{margin:0;background:#05080f;color:#fff;font-family:'Montserrat',sans-serif;display:flex;justify-content:center;padding:15px}
-.container{width:100%;max-width:500px;background:radial-gradient(ellipse at top, #0a1a2f 0%, #05080f 70%);border:1px solid #1a2a4a;border-radius:20px;overflow:hidden;box-shadow:0 0 60px rgba(255,215,0,.15)}
-.header{text-align:center;padding:30px 20px 10px;position:relative}
-.header h1{color:#FFD700;font-size:32px;font-weight:900;letter-spacing:3px;margin:0;text-shadow:0 0 20px rgba(255,215,0,.8)}
-.header p{color:#a0a0a0;font-size:9px;letter-spacing:2px;margin:5px 0 0}
-.light-beam{width:100%;height:120px;background:linear-gradient(to bottom, rgba(255,215,0,.3) 0%, rgba(255,215,0,0) 100%);clip-path:polygon(45% 0,55% 0,70% 100%,30% 100%);margin:0 auto -40px}
-.lighthouse{font-size:50px;filter:drop-shadow(0 0 20px #FFD700)}
-.section{margin:10px 15px;border:1px solid rgba(255,215,0,.3);border-radius:12px;background:linear-gradient(90deg, rgba(10,20,40,.9), rgba(5,10,20,.9));padding:12px 15px;display:flex;align-items:center;justify-content:space-between}
-.section-left{display:flex;align-items:center;gap:10px}
-.num{color:#FFD700;font-weight:900;font-size:13px}
-.label{font-size:11px;font-weight:700;letter-spacing:1px}
-.sub{font-size:8px;color:#888;display:block}
-.icon{color:#FFD700;font-size:14px}
-.divider{height:1px;background:linear-gradient(90deg, transparent, rgba(255,215,0,.3), transparent);margin:8px 15px}
-.base{margin:15px;border:1px solid rgba(255,215,0,.4);border-radius:14px;background:#0a0a14;padding:0;overflow:hidden}
-.base-title{background:linear-gradient(90deg, #b8860b, #FFD700, #b8860b);color:#000;text-align:center;font-weight:900;font-size:12px;padding:6px;letter-spacing:2px}
-.pillars{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding:12px}
-.pillar{text-align:center;background:radial-gradient(circle at top, rgba(255,215,0,.15), transparent);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:10px 4px}
-.pillar-icon{font-size:18px;color:#FFD700;filter:drop-shadow(0 0 8px #FFD700)}
-.pillar-name{font-size:8px;margin-top:6px;font-weight:700;color:#FFD700;line-height:1.1}
-.footer{text-align:center;padding:12px;font-size:7px;color:#555;letter-spacing:2px}
-.live{color:#00ff88;text-shadow:0 0 10px #00ff88;font-size:10px;font-weight:900;margin-top:15px}
+body{margin:0;background:#02050a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:0}
+.wrap{width:100%;max-width:600px;background:#000;box-shadow:0 0 80px rgba(255,215,0,.25)}
+img{width:100%;height:auto;display:block}
+.live{text-align:center;padding:15px;color:#00ff88;font-family:Arial;font-weight:900;font-size:14px;text-shadow:0 0 10px #00ff88;letter-spacing:2px;background:#000;border-top:1px solid rgba(255,215,0,.2)}
+.link{color:#FFD700;text-align:center;display:block;padding-bottom:15px;font-family:Arial;font-size:10px;text-decoration:none;letter-spacing:1px}
 </style>
 </head>
 <body>
-<div class="container">
-<div class="header">
-<h1>FAROL DA ALMA</h1>
-<p>DIAGRAMA ARQUITETÔNICO • DESIGN MODERNO E ESPIRITUAL</p>
-<div class="light-beam"></div>
-<div class="lighthouse">🗼</div>
-<p style="font-size:8px;color:#666;margin-top:10px">Guardando dados, memória e linguagem com segurança e sabedoria</p>
+<div class="wrap">
+<img src="https://i.ibb.co/6RJ0gWq7/farol-diagrama.png" alt="FAROL DA ALMA - Diagrama Arquitetônico">
+<!-- SE A IMAGEM NÃO CARREGAR, VAI APARECER O DIAGRAMA EM TEXTO ABAIXO -->
+<div style="padding:20px;text-align:center;color:#FFD700">
+<h1 style="margin:0;font-size:28px;letter-spacing:4px">FAROL DA ALMA</h1>
+<p style="font-size:10px;color:#888">DIAGRAMA ARQUITETÔNICO • DESIGN MODERNO E ESPIRITUAL</p>
+<p style="font-size:42px;margin:10px">🗼</p>
 </div>
-
-<div class="section"><div class="section-left"><span class="icon">🛡️</span><div><span class="label">01 • SEGURANÇA</span></div></div><div style="text-align:right"><span class="label" style="font-size:9px">Chave Mestra • Usuários</span><span class="sub">Autenticação • Autorização • Controle de Acesso</span></div><span class="icon">🔑</span></div>
-
-<div class="section"><div class="section-left"><span class="icon">📖</span><div><span class="label">02 • LINGUAGEM</span></div></div><div style="text-align:right"><span class="label" style="font-size:9px">Bíblia + Rede • Única</span><span class="sub">Tradução Unificada • Fio de Bíblia • Padrão de Linguagem Consistente</span></div><span class="icon">📚</span></div>
-
-<div class="section"><div class="section-left"><span class="icon">💾</span><div><span class="label">03 • MEMÓRIA</span></div></div><div style="text-align:right"><span class="label" style="font-size:9px">Persistente, Isolada</span><span class="sub">Armazenamento Imutável • Rastreamento de Dados • Backup Seguro</span></div><span class="icon">🗄️</span></div>
-
-<div class="section"><div class="section-left"><span class="icon">☁️</span><div><span class="label">04 • NUVEM</span></div></div><div style="text-align:right"><span class="label" style="font-size:9px">AWS / Google / Azure - Brasil</span><span class="sub">Multi-Cloud • Região Brasil • Alta Disponibilidade</span></div><span style="font-size:9px">aws</span></div>
-
-<div class="base">
-<div class="base-title">05 • BASE: 4 PILARES</div>
-<div class="pillars">
-<div class="pillar"><div class="pillar-icon">💡</div><div class="pillar-name">Sabedoria</div></div>
-<div class="pillar"><div class="pillar-icon">❤️</div><div class="pillar-name">Coração<br>Estável</div></div>
-<div class="pillar"><div class="pillar-icon">🙏</div><div class="pillar-name">Humildade<br>Forte</div></div>
-<div class="pillar"><div class="pillar-icon">🛡️</div><div class="pillar-name">Coragem</div></div>
-</div>
-<div style="text-align:center;font-size:6px;color:#555;padding:0 0 8px;letter-spacing:1px">FUNDAMENTO • ESTABILIDADE • VERDADE • PROPÓSITO</div>
-</div>
-
-<div class="live">SISTEMA ONLINE E ATIVO ● LIVE</div>
-<div class="footer">ARQUITETURA FAROL DA ALMA • SEGURA • CONFIÁVEL • ESPIRITUAL • ESCALÁVEL<br>farol-da-alma.onrender.com</div>
-</div>
+<div class="live">● SISTEMA ONLINE E ATIVO • LIVE</div>
+<a class="link" href="#">farol-da-alma.onrender.com • SEGURA • CONFIÁVEL • ESPIRITUAL • ESCALÁVEL</a>
 </div>
 </body>
 </html>
