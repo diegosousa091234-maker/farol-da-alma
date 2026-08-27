@@ -4,33 +4,33 @@ import os, json
 from datetime import datetime
 
 app = FastAPI()
+
 MEM_FILE = "memoria.json"
-CHAVE_MESTRE = "farol2026"
-CHAVE_ALUNO = "aluno123"
+CHAVE_MESTRA = "farol2026"
 
 def load():
     if os.path.exists(MEM_FILE):
         try:
-            with open(MEM_FILE,"r",encoding="utf-8") as f:
+            with open(MEM_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except: return {}
+        except:
+            return {}
     return {}
 
 def save(d):
-    with open(MEM_FILE,"w",encoding="utf-8") as f:
-        json.dump(d,f,ensure_ascii=False,indent=2)
+    with open(MEM_FILE, "w", encoding="utf-8") as f:
+        json.dump(d, f, ensure_ascii=False, indent=2)
 
-@app.get("/api/login/{chave}/{nome}")
-def login(chave: str, nome: str):
-    mem = load()
-    if chave == CHAVE_MESTRE:
-        tipo = "mestre"
-    elif chave == CHAVE_ALUNO:
-        tipo = "aluno"
-    else:
-        return {"ok": False, "erro": "Chave incorreta! Use farol2026 (mestre) ou aluno123 (aluno)"}
+# ROTA CORRIGIDA - ACEITA CHAVE / TIPO / NOME (igual seu HTML)
+@app.get("/api/login/{chave}/{tipo}/{nome}")
+def login(chave: str, tipo: str, nome: str):
+    if chave != CHAVE_MESTRA:
+        # aceita também aluno123 pra teste
+        if chave != "aluno123":
+            return {"ok": False, "erro": "Chave incorreta! Use farol2026"}
     
-    mem["usuario_atual"] = {"nome": nome, "tipo": tipo, "logado": True}
+    mem = load()
+    mem["usuario_atual"] = {"nome": nome, "tipo": tipo, "logado": True, "hora": datetime.now().isoformat()}
     mem["nome"] = nome
     hist = mem.get("historico", [])
     hist.append({"evento": f"Login {tipo}: {nome}", "hora": datetime.now().strftime("%H:%M")})
@@ -43,9 +43,9 @@ def oraculo(pergunta: str):
     mem = load()
     user = mem.get("usuario_atual", {})
     if not user.get("logado"):
-        return {"resposta": "🛡️ DIGITE A CHAVE primeiro para entrar POR DENTRO."}
-    nome = user.get("nome","Guerreiro")
-    tipo = user.get("tipo","aluno")
+        return {"resposta": "🛡️ Faça login primeiro."}
+    nome = user.get("nome", "Diego")
+    tipo = user.get("tipo", "mestre")
     p = pergunta.lower()
     
     hist = mem.get("historico", [])
@@ -55,13 +55,13 @@ def oraculo(pergunta: str):
 
     tag = f"[{tipo.upper()} {nome}]"
     if "tempra" in p or "forja" in p:
-        if tipo == "mestre":
-            return {"resposta": f"🔥 {tag} TEMPRA FORJA MESTRE liberada! Você tem poder total sobre o Farol, {nome}. Forjando a estrutura!"}
-        else:
-            return {"resposta": f"🔥 {tag} TEMPRA FORJA ALUNO: {nome}, sua alma está sendo forjada. O Mestre está vendo seu progresso."}
-    if "seguranca" in p:
-        return {"resposta": f"🛡️ {tag} SEGURANÇA: Logado como {tipo}. {len(hist)} registros. Imagem oficial ativa."}
-    return {"resposta": f"🔥 {tag} POR DENTRO: '{pergunta}' recebido. Você está conversando dentro do Farol com a imagem oficial ativa."}
+        return {"resposta": f"🔥 {tag} TEMPRA FORJA ATIVADA! Forjando sua alma agora, {nome}! Aço puro sendo temperado no fogo do Farol."}
+    if "seguran" in p or "status" in p:
+        return {"resposta": f"🛡️ {tag} SEGURANÇA OK - Logado como {tipo}: {nome}. Memória com {len(hist)} registros."}
+    if "sabedoria" in p:
+        return {"resposta": f"💡 {tag} SABEDORIA: Diego, o Farol lembra de você. A chave está dentro."}
+    return {"resposta": f"🔥 {tag} POR DENTRO: '{pergunta}' recebido. Sistema 100% funcional."}
 
 @app.get("/")
-def home(): return FileResponse("index.html")
+def home():
+    return FileResponse("index.html")
