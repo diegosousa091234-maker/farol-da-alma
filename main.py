@@ -4,63 +4,64 @@ import os, json
 from datetime import datetime
 
 app = FastAPI()
-
-# Banco simples em arquivo
 MEM_FILE = "memoria.json"
+CHAVE_MESTRE = "farol2026"
+CHAVE_ALUNO = "aluno123"
 
-def carregar_mem():
+def load():
     if os.path.exists(MEM_FILE):
         try:
-            with open(MEM_FILE, "r", encoding="utf-8") as f:
+            with open(MEM_FILE,"r",encoding="utf-8") as f:
                 return json.load(f)
-        except:
-            return {}
+        except: return {}
     return {}
 
-def salvar_mem(dados):
-    with open(MEM_FILE, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=2)
+def save(d):
+    with open(MEM_FILE,"w",encoding="utf-8") as f:
+        json.dump(d,f,ensure_ascii=False,indent=2)
 
-# API INTELIGENTE COMPLETA
+@app.get("/api/login/{chave}/{nome}")
+def login(chave: str, nome: str):
+    mem = load()
+    if chave == CHAVE_MESTRE:
+        tipo = "mestre"
+    elif chave == CHAVE_ALUNO:
+        tipo = "aluno"
+    else:
+        return {"ok": False, "erro": "Chave incorreta! Use farol2026 (mestre) ou aluno123 (aluno)"}
+    
+    mem["usuario_atual"] = {"nome": nome, "tipo": tipo, "logado": True}
+    mem["nome"] = nome
+    hist = mem.get("historico", [])
+    hist.append({"evento": f"Login {tipo}: {nome}", "hora": datetime.now().strftime("%H:%M")})
+    mem["historico"] = hist[-50:]
+    save(mem)
+    return {"ok": True, "nome": nome, "tipo": tipo}
+
 @app.get("/api/oraculo/{pergunta}")
 def oraculo(pergunta: str):
-    mem = carregar_mem()
-    nome = mem.get("nome", "Guerreiro")
+    mem = load()
+    user = mem.get("usuario_atual", {})
+    if not user.get("logado"):
+        return {"resposta": "🛡️ DIGITE A CHAVE primeiro para entrar POR DENTRO."}
+    nome = user.get("nome","Guerreiro")
+    tipo = user.get("tipo","aluno")
     p = pergunta.lower()
     
-    # Salva histórico
-    historico = mem.get("historico", [])
-    historico.append({"pergunta": pergunta, "hora": datetime.now().strftime("%H:%M")})
-    mem["historico"] = historico[-20:] # guarda últimas 20
-    salvar_mem(mem)
+    hist = mem.get("historico", [])
+    hist.append({"pergunta": pergunta, "por": nome})
+    mem["historico"] = hist[-50:]
+    save(mem)
 
-    if "sabedoria" in p:
-        return {"resposta": f"💡 SABEDORIA para {nome}: Guarde dados, mas libere seu propósito. O que vamos construir hoje?"}
-    if "coracao" in p or "coração" in p or "calma" in p:
-        return {"resposta": f"❤️ CORAÇÃO ESTÁVEL, {nome}: Respira. Sistema seguro, isolado. O Farol está aceso por você. 03h da manhã e você ainda está de pé."}
-    if "humildade" in p:
-        return {"resposta": f"🙏 HUMILDADE FORTE, {nome}: Servir é a maior força. O Farol não brilha pra si, brilha pros outros."}
-    if "coragem" in p or "medo" in p:
-        return {"resposta": f"🛡️ CORAGEM, {nome}: Você ligou um sistema inteligente às 3h da manhã no celular. Você JÁ tem coragem. Vai pra cima!"}
-    if "seguranca" in p or "segurança" in p or "status" in p:
-        total = len(historico)
-        return {"resposta": f"🛡️ SEGURANÇA ATIVA: Chave mestra OK. Memória: {total} conversas salvas. Usuário: {nome}. Nuvem: ONLINE."}
-    if "quem sou" in p or "meu nome" in p:
-        return {"resposta": f"📖 VOCÊ É: {nome}. Registrado no Pilar da Memória Persistente. O Farol lembra de você."}
-    else:
-        return {"resposta": f"🔥 FAROL responde para {nome}: '{pergunta}' recebido. Processado com os 4 pilares. Estou aprendendo com você. Pergunte sobre sabedoria, coragem ou segurança."}
-
-@app.get("/api/memoria")
-def get_mem():
-    return carregar_mem()
-
-@app.get("/api/salvar_nome/{nome}")
-def salvar_nome(nome: str):
-    mem = carregar_mem()
-    mem["nome"] = nome
-    salvar_mem(mem)
-    return {"ok": True, "nome": nome}
+    tag = f"[{tipo.upper()} {nome}]"
+    if "tempra" in p or "forja" in p:
+        if tipo == "mestre":
+            return {"resposta": f"🔥 {tag} TEMPRA FORJA MESTRE liberada! Você tem poder total sobre o Farol, {nome}. Forjando a estrutura!"}
+        else:
+            return {"resposta": f"🔥 {tag} TEMPRA FORJA ALUNO: {nome}, sua alma está sendo forjada. O Mestre está vendo seu progresso."}
+    if "seguranca" in p:
+        return {"resposta": f"🛡️ {tag} SEGURANÇA: Logado como {tipo}. {len(hist)} registros. Imagem oficial ativa."}
+    return {"resposta": f"🔥 {tag} POR DENTRO: '{pergunta}' recebido. Você está conversando dentro do Farol com a imagem oficial ativa."}
 
 @app.get("/")
-def home():
-    return FileResponse("index.html")
+def home(): return FileResponse("index.html")
