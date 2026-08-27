@@ -1,42 +1,27 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
+from flask import Flask, send_from_directory
 from pathlib import Path
+import os
 
-app = FastAPI()
+app = Flask(__name__)
+ROOT = Path(__file__).parent
 
-# Cria pastas se não existirem pra não quebrar o deploy
-for pasta in ["css", "js", "imagens", "paginas"]:
-    Path(pasta).mkdir(exist_ok=True)
-
-# Monta os estáticos só se existirem
-if Path("css").exists():
-    app.mount("/css", StaticFiles(directory="css"), name="css")
-if Path("js").exists():
-    app.mount("/js", StaticFiles(directory="js"), name="js")
-if Path("imagens").exists():
-    app.mount("/imagens", StaticFiles(directory="imagens"), name="imagens")
-if Path("paginas").exists():
-    app.mount("/paginas", StaticFiles(directory="paginas"), name="paginas")
-
-@app.get("/")
+@app.route("/")
 def home():
-    if Path("index.html").exists():
-        return FileResponse("index.html")
-    return {"status": "Farol da Alma - estrutura subindo", "service": "srv-da7s8ioae00c739vlfng"}
+    return send_from_directory(ROOT, "index.html")
 
-@app.get("/health")
+@app.route("/<path:path>")
+def static_files(path):
+    # serve css/, js/, paginas/, imagens/ quando você criar
+    file_path = ROOT / path
+    if file_path.exists() and file_path.is_file():
+        return send_from_directory(ROOT, path)
+    # se for pasta tipo /paginas/acesso.html
+    return send_from_directory(ROOT, path)
+
+@app.route("/health")
 def health():
-    return {"status": "live", "frequencia": "firme"}
+    return {"status": "ok", "farol": "flask aceso"}
 
-# Serve qualquer pagina.html direto
-@app.get("/{pag}")
-def serve_pag(pag: str):
-    if Path(pag).exists() and Path(pag).is_file():
-        return FileResponse(pag)
-    if Path(f"paginas/{pag}").exists():
-        return FileResponse(f"paginas/{pag}")
-    if Path("index.html").exists():
-        return FileResponse("index.html")
-    return {"erro": "pagina nao encontrada"}
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
