@@ -1,16 +1,111 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAROL DA ALMA</title>
+<title>FAROL DA ALMA - Acesso Interno</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#020610;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
-  img{width:100%;max-width:500px;height:auto;display:block}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#020610;color:#fff;font-family:Arial;display:flex;justify-content:center}
+.c{width:100%;max-width:500px;background:#020610;min-height:100vh;border:1px solid #1a2a4a;position:relative}
+.hero{width:100%;display:block}
+.login{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(2,6,16,.95);backdrop-filter:blur(10px);z-index:999;display:flex;justify-content:center;align-items:center;padding:20px}
+.login-box{background:#08152a;border:2px solid #FFD700;border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(255,215,0,.3)}
+.login-box h2{color:#FFD700;text-align:center;font-size:18px;letter-spacing:2px}
+.login-box p{font-size:10px;color:#888;text-align:center;margin:10px 0}
+.login-box input, .login-box select{width:100%;background:#020610;border:1px solid #1a2a4a;border-radius:12px;padding:12px;margin:8px 0;color:#fff;outline:none}
+.login-box button{width:100%;background:#FFD700;border:none;border-radius:12px;padding:12px;font-weight:900;cursor:pointer;margin-top:10px;color:#000}
+.top{text-align:center;padding:12px;background:#08152a}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;background:#08152a}
+.card{background:rgba(12,22,48,.9);border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:12px;text-align:center;cursor:pointer}
+.card b{color:#FFD700;font-size:11px;display:block}
+.chat{margin:12px;border:1px solid rgba(255,215,0,.2);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.msgs{padding:12px;display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto}
+.msg{padding:10px 12px;border-radius:12px;font-size:12px;max-width:85%}
+.bot{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);align-self:flex-start}
+.user{background:#FFD700;color:#000;align-self:flex-end;font-weight:700}
+.input{display:flex;gap:8px;padding:10px;background:#080c18;border-top:1px solid rgba(255,215,0,.2)}
+.input input{flex:1;background:#020610;border:1px solid #1a2a4a;border-radius:20px;padding:10px 14px;color:#fff;outline:none}
+.input button{background:#FFD700;border:none;border-radius:20px;padding:10px 16px;font-weight:900;cursor:pointer}
+.live{text-align:center;padding:12px;color:#00ff88;font-size:8px}
 </style>
 </head>
 <body>
-  <img src="farol.png" alt="FAROL DA ALMA - Diagrama Arquitetônico">
+<div class="c">
+<img class="hero" src="farol.png">
+
+<div id="loginScreen" class="login">
+<div class="login-box">
+<h2>🛡️ FAROL DA ALMA</h2>
+<p>ACESSO POR DENTRO • CHAVE MESTRA</p>
+<input id="chaveInput" type="password" placeholder="Digite a Chave Mestra">
+<select id="tipoInput">
+<option value="aluno">ALUNO</option>
+<option value="mestre">MESTRE (você)</option>
+</select>
+<input id="nomeLogin" placeholder="Seu nome">
+<button onclick="fazerLogin()">ENTRAR POR DENTRO ➤</button>
+<p id="loginErro" style="color:#ff4444;font-size:11px;display:none;margin-top:8px"></p>
+<p style="margin-top:12px;color:#666">Chave padrão: farol2026<br>Depois você muda</p>
+</div>
+</div>
+
+<div class="top"><h1 style="color:#FFD700;font-size:14px;letter-spacing:2px">SISTEMA INTERNO • CONVERSA POR DENTRO</h1></div>
+
+<div class="cards">
+<div class="card" onclick="perguntar('segurança status')"><b>🛡️ SEGURANÇA</b></div>
+<div class="card" onclick="perguntar('Tempra forja')"><b>🔥 TEMPRA FORJA</b></div>
+<div class="card" onclick="perguntar('sabedoria')"><b>💡 SABEDORIA</b></div>
+<div class="card" onclick="perguntar('coração estável')"><b>❤️ CORAÇÃO</b></div>
+</div>
+
+<div class="chat">
+<div class="msgs" id="msgs"><div class="msg bot">🔥 Bem-vindo POR DENTRO do Farol! Agora você está conversando internamente, com memória e chave mestra.</div></div>
+<div class="input">
+<input id="q" placeholder="Converse POR DENTRO..." onkeypress="if(event.key==='Enter')enviar()">
+<button onclick="enviar()">➤</button>
+</div>
+</div>
+<div class="live">● ACESSO INTERNO • MEMÓRIA PERSISTENTE • farol-da-alma.onrender.com</div>
+</div>
+
+<script>
+let logado=false;
+async function fazerLogin(){
+ const chave=document.getElementById('chaveInput').value;
+ const tipo=document.getElementById('tipoInput').value;
+ const nome=document.getElementById('nomeLogin').value;
+ if(!chave||!nome){ document.getElementById('loginErro').style.display='block'; document.getElementById('loginErro').innerText='Preencha chave e nome!'; return;}
+ const res=await fetch(`/api/login/${encodeURIComponent(chave)}/${encodeURIComponent(tipo)}/${encodeURIComponent(nome)}`);
+ const data=await res.json();
+ if(!data.ok){ document.getElementById('loginErro').style.display='block'; document.getElementById('loginErro').innerText=data.erro; return;}
+ document.getElementById('loginScreen').style.display='none';
+ logado=true;
+ addMsg(`🔑 Acesso liberado POR DENTRO como ${data.tipo.toUpperCase()}: ${data.nome}`,'bot');
+}
+async function perguntar(txt){
+ if(!logado){ alert('Digite a chave mestra primeiro!'); return;}
+ addMsg(txt,'user');
+ const res=await fetch('/api/oraculo/'+encodeURIComponent(txt));
+ const data=await res.json();
+ addMsg(data.resposta,'bot');
+}
+async function enviar(){
+ const v=document.getElementById('q').value;
+ if(!v) return;
+ document.getElementById('q').value='';
+ perguntar(v);
+}
+function addMsg(t,cls){
+ const m=document.createElement('div');
+ m.className='msg '+cls;
+ m.innerText=t;
+ const box=document.getElementById('msgs');
+ box.appendChild(m);
+ box.scrollTop=99999;
+}
+</script>
+</div>
 </body>
 </html>
